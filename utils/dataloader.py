@@ -13,7 +13,12 @@ def read_reaction_data(file_path):
         for line in file:
             try:
                 reactants, products = line.strip().split(">>")
-                reactions.append((reactants, products))
+                reactants=reactants.split('.')
+                products=products.split('.')
+                for react in reactants:
+                    for prod in products:
+                        reactions.append((react, prod))
+
             except:
                 pass
     return reactions
@@ -58,7 +63,8 @@ def collate_fn(batch):
 
 def load_data():
     file_path = 'data/reactionSmilesFigShare2023.txt'
-    reaction_data = read_reaction_data(file_path)[:1024]
+    reaction_data = read_reaction_data(file_path)
+    print(f'the number of records is: {len(reaction_data)}')
     reaction_dataset = ReactionDataset(reaction_data)
     data_loader = DataLoader(reaction_dataset, batch_size=64, shuffle=True, collate_fn=collate_fn)
     return data_loader
